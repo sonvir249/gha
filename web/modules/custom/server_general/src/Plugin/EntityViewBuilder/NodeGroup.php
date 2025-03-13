@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\server_general\Plugin\EntityViewBuilder;
 
 use Drupal\Core\Url;
@@ -23,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = "Node view builder for Group bundle."
  * )
  */
-class NodeGroup extends NodeViewBuilderAbstract {
+final class NodeGroup extends NodeViewBuilderAbstract {
 
   use ElementLayoutThemeTrait;
   use ElementNodeNewsThemeTrait;
