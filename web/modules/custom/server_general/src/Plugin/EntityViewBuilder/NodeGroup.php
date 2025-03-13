@@ -2,12 +2,14 @@
 
 namespace Drupal\server_general\Plugin\EntityViewBuilder;
 
-use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\server_general\EntityDateTrait;
 use Drupal\server_general\EntityViewBuilder\NodeViewBuilderAbstract;
 use Drupal\server_general\ThemeTrait\ElementLayoutThemeTrait;
 use Drupal\server_general\ThemeTrait\ElementNodeNewsThemeTrait;
+use Drupal\server_general\ThemeTrait\GreetingThemeTrait;
+use Drupal\server_general\ThemeTrait\LinkThemeTrait;
 use Drupal\server_general\ThemeTrait\SearchThemeTrait;
 use Drupal\server_general\ThemeTrait\TitleAndLabelsThemeTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -28,6 +30,8 @@ class NodeGroup extends NodeViewBuilderAbstract {
   use EntityDateTrait;
   use SearchThemeTrait;
   use TitleAndLabelsThemeTrait;
+  use LinkThemeTrait;
+  use GreetingThemeTrait;
 
   /**
    * The renderer.
@@ -84,18 +88,17 @@ class NodeGroup extends NodeViewBuilderAbstract {
   public function buildFull(array $build, NodeInterface $node): array {
     $user = $this->currentUser->getAccount();
     $user_entity = $this->entityTypeManager->getStorage('user')->load($user->id());
+
     // Show greeting message to authenticated users who are not members.
     if ($user->isAuthenticated() && !$this->membershipManager->isMember($node, $user->id())) {
-      $this->messenger()->addMessage($this->t('Hi @name, @click if you would like to subscribe to this group called @label.', [
-        '@name' => $user_entity->get('name')->value,
-        '@click' => Link::createFromRoute(
-          $this->t('Click Here'), 'og.subscribe', [
-            'entity_type_id' => $node->getEntityTypeId(),
-            'group' => $node->id(),
-            'og_membership_type' => 'default',
-          ])->toString(),
-        '@label' => $node->label(),
-      ]));
+      $url = Url::fromRoute('og.subscribe', [
+        'entity_type_id' => $node->getEntityTypeId(),
+        'group' => $node->id(),
+        'og_membership_type' => 'default',
+      ]);
+
+      $greeting_element = $this->buildGreeting($user_entity, $url, $node->label());
+      $build[] = $this->wrapContainerWide($greeting_element);
     }
 
     $header_element = $this->buildHeader(
