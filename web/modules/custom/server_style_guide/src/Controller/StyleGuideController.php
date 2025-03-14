@@ -213,7 +213,7 @@ class StyleGuideController extends ControllerBase {
     $person_card_element = $this->getPersonCard();
     $build[] = $this->wrapElementWideContainer($person_card_element, 'Person Card');
 
-    $person_cards_element = $this->getPersonCards(2);
+    $person_cards_element = $this->getPersonCards(10);
     $build[] = $this->wrapElementWideContainer($person_cards_element, 'Person Cards');
     return $build;
   }
