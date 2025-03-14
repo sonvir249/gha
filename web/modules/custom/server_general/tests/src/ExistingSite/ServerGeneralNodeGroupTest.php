@@ -41,7 +41,7 @@ class ServerGeneralNodeGroupTest extends ServerGeneralNodeTestBase {
     // Creates a user. Will be automatically cleaned up at the end of the test.
     $author = $this->createUser();
 
-    // Create a "Group", Will be automatically cleaned up at end oftest.
+    // Create a "Group", Will be automatically cleaned up at end of the test.
     $node = $this->createNode([
       'title' => 'Avengers',
       'type' => 'group',
@@ -49,19 +49,27 @@ class ServerGeneralNodeGroupTest extends ServerGeneralNodeTestBase {
       'moderation_state' => 'published',
     ]);
     $this->assertEquals($author->id(), $node->getOwnerId());
-
-    // We can login and browse admin pages.
-    $this->drupalLogin($author);
     $this->drupalGet($node->toUrl());
     $this->assertSession()->statusCodeEquals(Response::HTTP_OK);
-    $this->drupalGet("group/node/{$node->id()}/subscribe");
+
+    // Test for authenticated users.
+    $authenticated_user = $this->createUser();
+    $this->drupalLogin($authenticated_user);
+    $this->drupalGet($node->toUrl());
+    $this->assertSession()->statusCodeEquals(200);
+
+    $subscribe_url = "/group/node/{$node->id()}/subscribe";
+    $greeting_message = "Hi {$authenticated_user->getDisplayName()}, click here if you would like to subscribe to this group called {$node->getTitle()}";
+    $this->assertSession()->pageTextContainsOnce($greeting_message);
+    $this->drupalGet($subscribe_url);
     $this->assertSession()->statusCodeEquals(Response::HTTP_OK);
 
-    // Check group node for anonymous.
+    // Check group subscribe for anonymous.
     $this->drupalLogout();
-    $this->drupalGet($node->toUrl());
+    $this->drupalGet($subscribe_url);
     $this->assertSession()->statusCodeEquals(Response::HTTP_OK);
-    $this->assertSession()->pageTextNotContains('if you would like to subscribe to this group called');
+    // Assert the page is redirected to /user/login.
+    $this->assertSession()->addressEquals('/user/login');
   }
 
 }
