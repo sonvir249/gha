@@ -22,6 +22,7 @@ use Drupal\server_general\ThemeTrait\InfoCardThemeTrait;
 use Drupal\server_general\ThemeTrait\LinkThemeTrait;
 use Drupal\server_general\ThemeTrait\NewsTeasersThemeTrait;
 use Drupal\server_general\ThemeTrait\PeopleTeasersThemeTrait;
+use Drupal\server_general\ThemeTrait\PersonCardThemeTrait;
 use Drupal\server_general\ThemeTrait\QuickLinksThemeTrait;
 use Drupal\server_general\ThemeTrait\QuoteThemeTrait;
 use Drupal\server_general\ThemeTrait\SearchThemeTrait;
@@ -62,7 +63,7 @@ class StyleGuideController extends ControllerBase {
   use TagThemeTrait;
   use TitleAndLabelsThemeTrait;
   use WebformTrait;
-
+  use PersonCardThemeTrait;
 
   /**
    * The link generator service.
@@ -209,6 +210,11 @@ class StyleGuideController extends ControllerBase {
     $element = $this->getWebformElement();
     $build[] = $this->wrapElementNoContainer($element, 'Element: Webform');
 
+    $person_card_element = $this->getPersonCard();
+    $build[] = $this->wrapElementWideContainer($person_card_element, 'Person Card');
+
+    $person_cards_element = $this->getPersonCards(10);
+    $build[] = $this->wrapElementWideContainer($person_cards_element, 'Person Cards');
     return $build;
   }
 
@@ -922,6 +928,40 @@ class StyleGuideController extends ControllerBase {
       $this->getRandomTitle(),
       $this->buildProcessedText('Decorate one package of cauliflower in six teaspoons of plain vinegar. Try flavoring the crême fraîche gingers with clammy rum and fish sauce, simmered.'),
     );
+  }
+
+  /**
+   * Get Person card element.
+   *
+   * @return array
+   *   The render array.
+   */
+  protected function getPersonCard(): array {
+    return $this->buildElementPersonCardItem(
+      'https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png',
+      'Jese Leos',
+      'Software Engineer',
+      'Facebook Representative',
+      'admin@facebook.com',
+      '+91 1234567890',
+    );
+  }
+
+  /**
+   * Get Person cards element.
+   *
+   * @param int $num
+   *   Number of cards to create.
+   *
+   * @return array
+   *   The render array.
+   */
+  protected function getPersonCards(int $num = 1): array {
+    $cards = [];
+    for ($i = 0; $i < $num; $i++) {
+      $cards[$i] = $this->buildElementPersonCardItem();
+    }
+    return $this->buildElementPersonCards($cards);
   }
 
 }
