@@ -511,6 +511,14 @@ function server_theme_theme() {
     'variables' => [],
   ];
 
+  $info['server_theme_greeting'] = [
+    'variables' => [
+      'user' => NULL,
+      'url' => NULL,
+      'label' => NULL,
+    ],
+  ];
+
   // Person card item.
   $info['server_theme_element__person_card_item'] = [
     'variables' => [
@@ -530,7 +538,6 @@ function server_theme_theme() {
       'items' => [],
     ],
   ];
-
   return $info;
 }
 
