@@ -511,6 +511,26 @@ function server_theme_theme() {
     'variables' => [],
   ];
 
+  // Person card item.
+  $info['server_theme_element__person_card_item'] = [
+    'variables' => [
+      'profile_image' => NULL,
+      'name' => NULL,
+      'role' => NULL,
+      'badge_label' => NULL,
+      'email' => NULL,
+      'phone' => NULL,
+    ],
+  ];
+
+  // Person card item.
+  $info['server_theme_element__person_cards'] = [
+    'variables' => [
+      // A render array built with `server_theme_element__person_card_item`.
+      'items' => [],
+    ],
+  ];
+
   return $info;
 }
 
